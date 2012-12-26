@@ -3118,11 +3118,11 @@ Don't set it directly, use instead `anything-ff-auto-update-initial-value'.")
      . ,(delq
          nil
          `(("Find File" . anything-c-find-file-or-marked)
-           ("Find file in Dired" . anything-c-point-file-in-dired)
            ,(and (locate-library "elscreen")
                  '("Find file in Elscreen"  . anything-elscreen-find-file))
            ,(and (locate-library "popwin")
                  '("Find file in popup window" . popwin:find-file))
+           ("Find file in Dired" . anything-c-point-file-in-dired)
            ("Checksum File" . anything-ff-checksum)
            ("Complete at point `M-tab'"
             . anything-c-insert-file-name-completion-at-point)
@@ -5564,10 +5564,10 @@ If it's empty --exclude `grep-find-ignored-files' is used instead."
         (action . ,(delq
                     nil
                     `(("Find File" . anything-c-grep-action)
-                      ("Find file other frame" . anything-c-grep-other-frame)
                       ,(and (locate-library "elscreen")
                             '("Find file in Elscreen"
                               . anything-c-grep-jump-elscreen))
+                      ("Find file other frame" . anything-c-grep-other-frame)
                       ("Save results in grep buffer" . anything-c-grep-save-results)
                       ("Find file other window" . anything-c-grep-other-window))))
         (persistent-action . anything-c-grep-persistent-action)
@@ -11588,10 +11588,10 @@ with original attribute value.
 (define-anything-type-attribute 'buffer
     `((action
        ("Switch to buffer" . anything-c-switch-to-buffer)
+       ,(and (locate-library "elscreen") '("Display buffer in Elscreen" . anything-find-buffer-on-elscreen))
        ,(and (locate-library "popwin") '("Switch to buffer in popup window" . popwin:popup-buffer))
        ("Switch to buffer other window" . switch-to-buffer-other-window)
        ("Switch to buffer other frame" . switch-to-buffer-other-frame)
-       ,(and (locate-library "elscreen") '("Display buffer in Elscreen" . anything-find-buffer-on-elscreen))
        ("Query replace regexp" . anything-c-buffer-query-replace-regexp)
        ("Query replace" . anything-c-buffer-query-replace)
        ("View buffer" . view-buffer)
@@ -11612,6 +11612,7 @@ with original attribute value.
 (define-anything-type-attribute 'file
     `((action
        ("Find file" . anything-find-many-files)
+       ,(and (locate-library "elscreen") '("Display buffer in Elscreen" . elscreen-find-file))
        ,(and (locate-library "popwin") '("Find file in popup window" . popwin:find-file))
        ("Find file as root" . anything-find-file-as-root)
        ("Find file other window" . find-file-other-window)
