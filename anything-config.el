@@ -7856,8 +7856,8 @@ http://en.wikipedia.org/wiki/Ruby_Document_format")
 http://www.emacswiki.org/cgi-bin/wiki/download/el-expectations.el")
 
 (defvar anything-c-source-emacs-lisp-toplevels
-  '((name . "Emacs Lisp Toplevel / Level 4 Comment / Linkd Star")
-    (headline . "^(\\|(@\\*\\|^;;;;")
+  '((name . "Emacs Lisp Toplevel / Level 3 Comment / Linkd Star / interactive")
+    (headline . "^(\\|(@\\*\\|^;;;\\|(interactive\\b")
     (get-line . buffer-substring)
     (condition . (eq major-mode 'emacs-lisp-mode))
     (adjust))
@@ -11073,7 +11073,7 @@ other candidate transformers."
     (anything-transform-mapcar
      (lambda (file)
        (if (and (stringp file) (string-match home file))
-           (cons (replace-match "~" nil nil file) file)
+           (replace-match "~" nil nil file)
          file))
      files)))
 
@@ -11547,6 +11547,9 @@ with original attribute value.
    (anything-c-arrange-type-attribute 'file
       '((action (\"Play sound\" . play-sound-file)
          REST ;; Rest of actions (find-file, find-file-other-window, etc...)."
+  (setq anything-additional-type-attributes
+        (delete (assq type anything-additional-type-attributes)
+                anything-additional-type-attributes))
   (add-to-list 'anything-additional-type-attributes
                (cons type
                      (loop with typeattr = (assoc-default
@@ -11566,10 +11569,14 @@ with original attribute value.
 (put 'anything-c-arrange-type-attribute 'lisp-indent-function 1)
 
 (defun anything-compile-source--type-customize (source)
-  (anything-aif (assoc-default (assoc-default 'type source)
-                               anything-additional-type-attributes)
-      (append it source)
+  (anything-aif (or (assoc-default (assoc-default 'type source)
+                                   anything-additional-type-attributes)
+                    (assoc-default (assoc-default 'type source)
+                                   anything-type-attributes))
+      (append source it)
     source))
+(setq anything-compile-source-functions
+      (delete 'anything-compile-source--type anything-compile-source-functions))
 (add-to-list 'anything-compile-source-functions
              'anything-compile-source--type-customize t)
 
@@ -11800,8 +11807,9 @@ It is drop-in replacement of `yank-pop'.
 You may bind this command to M-y.
 First call open the kill-ring browser, next calls move to next line."
   (interactive)
-  (anything :sources 'anything-c-source-kill-ring
-            :buffer "*anything kill-ring*"))
+  (let ((enable-recursive-minibuffers t))
+    (anything :sources 'anything-c-source-kill-ring
+              :buffer "*anything kill-ring*")))
 
 ;;;###autoload
 (defun anything-minibuffer-history ()
